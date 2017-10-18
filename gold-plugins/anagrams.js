@@ -2,9 +2,7 @@
 * Anagram plugin for Pokémon Showdown *
 * By: jd                              *
 **************************************/
-// TODO: Replace .sample methods
 
-/*
 'use strict';
 
 const fs = require('fs');
@@ -38,6 +36,22 @@ fs.readFile('config/wordlist.txt', 'utf8', function (err, data) {
 	});
 });
 
+function mix(word) {
+	let arr = [];
+	for (let k = 0; k < word.length; k++) {
+		arr.push(word[k]);
+	}
+	let a, b, i = arr.length;
+	while (i) {
+		a = Math.floor(Math.random() * i);
+		i--;
+		b = arr[i];
+		arr[i] = arr[a];
+		arr[a] = b;
+	}
+	return arr.join('');
+}
+
 exports.commands = {
 	anagram: function (target, room, user) {
 		if (!user.can('broadcast', null, room) || !this.canTalk()) return this.errorReply('/anagram - Access denied.');
@@ -52,10 +66,10 @@ exports.commands = {
 		switch (target) {
 		case 'pokemon':
 			theme = 'Pokemon';
-			let pokemon = Dex.getTemplate(Object.keys(Dex.data.Pokedex).sample().trim());
+			let template = Dex.getTemplate(target).trim());
+			let pokemon = template[Math.floor(Math.random() * template.length)];
 			room.anagram.word = pokemon.name;
 			while (toId(pokemon.name).indexOf('mega') > -1 || pokemon.tier === 'CAP') {
-				pokemon = Dex.getTemplate(Object.keys(Dex.data.Pokedex).sample().trim());
 				room.anagram.word = pokemon.name;
 			}
 			break;
@@ -69,12 +83,12 @@ exports.commands = {
 		default:
 		case 'normal':
 			theme = 'Normal';
-			room.anagram.word = anagramWords.sample().trim();
-			while (room.anagram.word.length < 4 || room.anagram.word.length > 8) room.anagram.word = anagramWords.sample().trim();
+			room.anagram.word = mix(anagramWords).trim();
+			while (room.anagram.word.length < 4 || room.anagram.word.length > 8) room.anagram.word = mix(anagramWords).trim();
 			break;
 		}
 
-		room.anagram.scrambledWord = toId(room.anagram.word.split('').sort(function () {return 0.5 - Math.random();}).join(''));
+		room.anagram.scrambledWord = toId(room.anagram.word.split('').sort(function () { return 0.5 - Math.random(); }).join(''));
 		while (room.anagram.scrambledWord === toId(room.anagram.word)) room.anagram.scrambledWord = toId(room.anagram.word.split('').sort(function () { return 0.5 - Math.random(); }).join(''));
 
 		room.chat = function (user, message, connection) {
@@ -101,4 +115,3 @@ exports.commands = {
 	},
 	endanagramhelp: ["/endanagram - Ends the current game of anagrams in the respected room.  Requires +, %, @, #, &, ~"],
 };
-*/
